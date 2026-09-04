@@ -28,13 +28,10 @@
     "styled-qr",
     "vector-style"
   ],
-  "author": "Pragadeeshwaran Jayapal <pragadeeshwaran.jayapal@valeo.com>",
+  "author": "Pragadeeshwaran Jayapal <waran718@gmail.com>",
   "license": "MIT",
   "engines": {
     "node": ">=12.0.0"
-  },
-  "publishConfig": {
-    "@softwarefactory:registry": "https://artf.alm.vnet.valeo.com/artifactory/api/npm/npm-remote/"
   },
   "devDependencies": {
     "buffer": "^6.0.3",
