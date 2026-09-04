@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator Playground</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --background: #0f172a;
+            --card-bg: #1e293b;
+            --border: #334155;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .layout {
+                grid-template-columns: 1.2fr 1fr;
+            }
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            background-color: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.625rem;
+            color: var(--text);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus, select:focus {
+            border-color: var(--primary);
+        }
+
+        .color-pickers {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+
+        .color-picker-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.5rem;
+        }
+
+        .color-picker-wrapper label {
+            font-size: 0.75rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .color-picker-wrapper input[type="color"] {
+            -webkit-appearance: none;
+            border: none;
+            width: 100%;
+            height: 32px;
+            border-radius: 4px;
+            cursor: pointer;
+            background: none;
+        }
+
+        .color-picker-wrapper input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        .color-picker-wrapper input[type="color"]::-webkit-color-swatch {
+            border: 1px solid var(--border);
+            border-radius: 4px;
+        }
+
+        .sliders {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        @media (min-width: 500px) {
+            .sliders {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .slider-group {
+            background-color: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.75rem;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.25rem;
+        }
+
+        .slider-val {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.85rem;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--primary);
+            background: var(--border);
+            height: 5px;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .logo-source {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            user-select: none;
+            background-color: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.625rem;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .btn {
+            display: inline-block;
+            width: 100%;
+            background-color: var(--primary);
+            color: var(--text);
+            text-align: center;
+            padding: 0.75rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            margin-top: 1rem;
+        }
+
+        .btn-success:hover {
+            background-color: #059669;
+        }
+
+        .preview-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+            background: radial-gradient(circle, #1e293b 0%, #0f172a 100%);
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .preview-img {
+            max-width: 100%;
+            max-height: 350px;
+            object-fit: contain;
+            border-radius: 6px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            display: none;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border-left-color: var(--primary);
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .placeholder-text {
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .code-block {
+            background-color: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.75rem;
+            margin-top: 1rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: #34d399;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1rem;
+        }
+
+        .tab {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .tab.active {
+            border-color: var(--primary);
+            color: var(--text);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .file-upload-wrapper {
+            position: relative;
+            background-color: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.625rem;
+        }
+
+        .file-upload-wrapper input[type="file"] {
+            width: 100%;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .file-upload-wrapper input[type="file"]::-webkit-file-upload-button {
+            background-color: var(--border);
+            color: var(--text);
+            border: none;
+            padding: 0.35rem 0.75rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .file-upload-wrapper input[type="file"]::-webkit-file-upload-button:hover {
+            background-color: #475569;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>QR Code Playground</h1>
+            <p>Generate highly-styled vector QR codes with rounded corners, dot matrices, and logo overlays in real time.</p>
+        </header>
+
+        <div class="layout">
+            <!-- Left panel: Configuration Form -->
+            <div class="card">
+                <div class="card-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+                    Configuration
+                </div>
+
+                <form id="qrForm">
+                    <div class="form-group">
+                        <label for="text">QR Code Text or URL</label>
+                        <input type="text" id="text" name="text" value="https://google.com" required placeholder="e.g., https://example.com or any raw text">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Colors</label>
+                        <div class="color-pickers">
+                            <div class="color-picker-wrapper">
+                                <label for="qrColor">QR Pattern</label>
+                                <input type="color" id="qrColor" name="qrColor" value="#4C8A00">
+                            </div>
+                            <div class="color-picker-wrapper">
+                                <label for="bgColor">Background</label>
+                                <input type="color" id="bgColor" name="bgColor" value="#FFFFFF">
+                            </div>
+                            <div class="color-picker-wrapper">
+                                <label for="borderColor">Border Frame</label>
+                                <input type="color" id="borderColor" name="borderColor" value="#FFFFFF">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Sizing & Dots</label>
+                        <div class="sliders">
+                            <div class="slider-group">
+                                <div class="slider-header">
+                                    <label for="scale">Module Scale</label>
+                                    <span class="slider-val" id="scale-val">16</span>
+                                </div>
+                                <input type="range" id="scale" name="scale" min="4" max="32" value="16">
+                            </div>
+
+                            <div class="slider-group">
+                                <div class="slider-header">
+                                    <label for="border">Quiet Zone Border</label>
+                                    <span class="slider-val" id="border-val">4</span>
+                                </div>
+                                <input type="range" id="border" name="border" min="0" max="10" value="4">
+                            </div>
+
+                            <div class="slider-group" style="grid-column: span 2;">
+                                <div class="slider-header">
+                                    <label for="dotScale">Data Dot Scale (0.1 to 1.0)</label>
+                                    <span class="slider-val" id="dotScale-val">0.86</span>
+                                </div>
+                                <input type="range" id="dotScale" name="dotScale" min="0.1" max="1.0" step="0.01" value="0.86">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Logo Overlay</label>
+                        
+                        <div class="tabs">
+                            <div class="tab active" data-tab="logo-default">Preset/Default</div>
+                            <div class="tab" data-tab="logo-url">URL</div>
+                            <div class="tab" data-tab="logo-upload">File Upload</div>
+                        </div>
+
+                        <!-- Tab 1: Default/No Logo -->
+                        <div class="tab-content active" id="logo-default">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="useDefaultLogo" name="useDefaultLogo" checked>
+                                <label for="useDefaultLogo" style="margin: 0; cursor: pointer;">Enable Center Project Logo (logo.png)</label>
+                            </div>
+                        </div>
+
+                        <!-- Tab 2: Logo URL -->
+                        <div class="tab-content" id="logo-url">
+                            <div class="form-group">
+                                <label for="logoUrl">Logo Image URL (8-bit RGBA PNG only)</label>
+                                <input type="text" id="logoUrl" name="logoUrl" placeholder="https://example.com/logo.png">
+                            </div>
+                        </div>
+
+                        <!-- Tab 3: Custom Upload -->
+                        <div class="tab-content" id="logo-upload">
+                            <div class="file-upload-wrapper">
+                                <input type="file" id="logoFile" accept="image/png">
+                            </div>
+                        </div>
+
+                        <div class="sliders" style="margin-top: 1rem;">
+                            <div class="slider-group">
+                                <div class="slider-header">
+                                    <label for="logoSizeRatio">Logo Width %</label>
+                                    <span class="slider-val" id="logoSizeRatio-val">20%</span>
+                                </div>
+                                <input type="range" id="logoSizeRatio" name="logoSizeRatio" min="0.05" max="0.4" step="0.01" value="0.2">
+                            </div>
+
+                            <div class="slider-group">
+                                <div class="slider-header">
+                                    <label for="logoPaddingRatio">Backdrop Padding %</label>
+                                    <span class="slider-val" id="logoPaddingRatio-val">20%</span>
+                                </div>
+                                <input type="range" id="logoPaddingRatio" name="logoPaddingRatio" min="0" max="0.4" step="0.01" value="0.2">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="level">Error Correction Level (Defaults to H with logo for scan-safety)</label>
+                        <select id="level" name="level">
+                            <option value="H" selected>High (30% recovery - highly recommended)</option>
+                            <option value="Q">Quartile (25% recovery)</option>
+                            <option value="M">Medium (15% recovery)</option>
+                            <option value="L">Low (7% recovery)</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn">Generate Dynamic QR Code</button>
+                </form>
+            </div>
+
+            <!-- Right panel: QR Code Preview -->
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <div class="card" style="flex: 1; display: flex; flex-direction: column;">
+                    <div class="card-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        Live Preview
+                    </div>
+                    
+                    <div class="preview-container" style="flex: 1;">
+                        <div class="spinner" id="spinner"></div>
+                        <img src="" alt="Generated Styled QR Code" class="preview-img" id="previewImg">
+                        <div class="placeholder-text" id="placeholderText">
+                            <p>Adjust the options and click "Generate" or make changes to generate your customized QR code.</p>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-success" id="downloadBtn" style="display: none;">Download PNG</button>
+                </div>
+
+                <!-- API Integration Code Block -->
+                <div class="card">
+                    <div class="card-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                        API Integration
+                    </div>
+                    <label>GET Endpoint Integration (Simply place inside an &lt;img&gt; tag!):</label>
+                    <div class="code-block" id="apiGetUrl">
+                        &lt;img src="http://localhost:3000/api/qr?text=..." /&gt;
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('qrForm');
+        const previewImg = document.getElementById('previewImg');
+        const spinner = document.getElementById('spinner');
+        const placeholderText = document.getElementById('placeholderText');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const apiGetUrl = document.getElementById('apiGetUrl');
+
+        // Manage Tabs
+        const tabs = document.querySelectorAll('.tab');
+        let activeTab = 'logo-default';
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                activeTab = tab.getAttribute('data-tab');
+                document.getElementById(activeTab).classList.add('active');
+                
+                triggerAutogenerate();
+            });
+        });
+
+        // Sync Slider numerical values
+        const rangeInputs = form.querySelectorAll('input[type="range"]');
+        rangeInputs.forEach(input => {
+            const valSpan = document.getElementById(`${input.id}-val`);
+            input.addEventListener('input', () => {
+                if (input.id.includes('Ratio')) {
+                    valSpan.textContent = Math.round(input.value * 100) + '%';
+                } else {
+                    valSpan.textContent = input.value;
+                }
+                triggerAutogenerate();
+            });
+        });
+
+        // Trigger on any basic control changes
+        const autoInputs = form.querySelectorAll('input[type="color"], select, input[type="checkbox"]');
+        autoInputs.forEach(input => {
+            input.addEventListener('change', triggerAutogenerate);
+        });
+
+        document.getElementById('text').addEventListener('input', triggerAutogenerate);
+        document.getElementById('logoUrl').addEventListener('input', triggerAutogenerate);
+        document.getElementById('logoFile').addEventListener('change', triggerAutogenerate);
+
+        let autogenTimeout;
+        function triggerAutogenerate() {
+            clearTimeout(autogenTimeout);
+            autogenTimeout = setTimeout(() => {
+                generateQr();
+            }, 300); // Debounce
+        }
+
+        // Generate QR code function
+        async function generateQr(e) {
+            if (e) e.preventDefault();
+
+            const text = document.getElementById('text').value.trim();
+            if (!text) return;
+
+            showLoading();
+
+            const qrColor = document.getElementById('qrColor').value;
+            const bgColor = document.getElementById('bgColor').value;
+            const borderColor = document.getElementById('borderColor').value;
+            const scale = document.getElementById('scale').value;
+            const border = document.getElementById('border').value;
+            const dotScale = document.getElementById('dotScale').value;
+            const logoSizeRatio = document.getElementById('logoSizeRatio').value;
+            const logoPaddingRatio = document.getElementById('logoPaddingRatio').value;
+            const level = document.getElementById('level').value;
+
+            // Generate correct GET integration URL for the info card
+            let queryParams = `text=${encodeURIComponent(text)}&qrColor=${encodeURIComponent(qrColor)}&bgColor=${encodeURIComponent(bgColor)}&borderColor=${encodeURIComponent(borderColor)}&scale=${scale}&border=${border}&dotScale=${dotScale}&logoSizeRatio=${logoSizeRatio}&logoPaddingRatio=${logoPaddingRatio}&level=${level}`;
+            
+            // Build request
+            try {
+                let url = '/api/qr';
+                let blob;
+
+                if (activeTab === 'logo-upload' && document.getElementById('logoFile').files[0]) {
+                    // Use File Upload (Multipart Form Data)
+                    url = '/api/qr/upload';
+                    const formData = new FormData();
+                    formData.append('text', text);
+                    formData.append('qrColor', qrColor);
+                    formData.append('bgColor', bgColor);
+                    formData.append('borderColor', borderColor);
+                    formData.append('scale', scale);
+                    formData.append('border', border);
+                    formData.append('dotScale', dotScale);
+                    formData.append('logoSizeRatio', logoSizeRatio);
+                    formData.append('logoPaddingRatio', logoPaddingRatio);
+                    formData.append('level', level);
+                    formData.append('logo', document.getElementById('logoFile').files[0]);
+
+                    const res = await fetch(url, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (!res.ok) {
+                        const json = await res.json();
+                        throw new Error(json.details || json.error || 'Server error');
+                    }
+                    blob = await res.blob();
+                    
+                    apiGetUrl.textContent = `// Custom uploaded logo requires POST /api/qr/upload multipart. See documentation for file field payload.`;
+                } else if (activeTab === 'logo-url' && document.getElementById('logoUrl').value.trim()) {
+                    // Use URL logo (GET/POST compatible)
+                    const logoUrlVal = document.getElementById('logoUrl').value.trim();
+                    queryParams += `&logoUrl=${encodeURIComponent(logoUrlVal)}`;
+                    
+                    const res = await fetch(`${url}?${queryParams}`);
+                    if (!res.ok) {
+                        const json = await res.json();
+                        throw new Error(json.details || json.error || 'Server error');
+                    }
+                    blob = await res.blob();
+
+                    const absoluteUrl = window.location.origin + `/api/qr?${queryParams}`;
+                    apiGetUrl.textContent = `<img src="${absoluteUrl}" alt="Styled QR Code" />`;
+                } else if (activeTab === 'logo-default' && document.getElementById('useDefaultLogo').checked) {
+                    // Use Default/Preset Logo (GET/POST compatible)
+                    queryParams += `&useDefaultLogo=true`;
+
+                    const res = await fetch(`${url}?${queryParams}`);
+                    if (!res.ok) {
+                        const json = await res.json();
+                        throw new Error(json.details || json.error || 'Server error');
+                    }
+                    blob = await res.blob();
+
+                    const absoluteUrl = window.location.origin + `/api/qr?${queryParams}`;
+                    apiGetUrl.textContent = `<img src="${absoluteUrl}" alt="Styled QR Code" />`;
+                } else {
+                    // No logo requested (GET/POST compatible)
+                    const res = await fetch(`${url}?${queryParams}`);
+                    if (!res.ok) {
+                        const json = await res.json();
+                        throw new Error(json.details || json.error || 'Server error');
+                    }
+                    blob = await res.blob();
+
+                    const absoluteUrl = window.location.origin + `/api/qr?${queryParams}`;
+                    apiGetUrl.textContent = `<img src="${absoluteUrl}" alt="Styled QR Code" />`;
+                }
+
+                // Render preview
+                const objectUrl = URL.createObjectURL(blob);
+                previewImg.src = objectUrl;
+                previewImg.style.display = 'block';
+                spinner.style.display = 'none';
+                downloadBtn.style.display = 'block';
+
+                // Setup Download
+                downloadBtn.onclick = () => {
+                    const a = document.createElement('a');
+                    a.href = objectUrl;
+                    a.download = `qrcode-${Date.now()}.png`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                };
+
+            } catch (err) {
+                console.error(err);
+                showError(err.message);
+            }
+        }
+
+        function showLoading() {
+            spinner.style.display = 'block';
+            previewImg.style.display = 'none';
+            placeholderText.style.display = 'none';
+            downloadBtn.style.display = 'none';
+        }
+
+        function showError(msg) {
+            spinner.style.display = 'none';
+            previewImg.style.display = 'none';
+            downloadBtn.style.display = 'none';
+            placeholderText.style.display = 'block';
+            placeholderText.innerHTML = `<span style="color: #ef4444; font-weight: 600;">Error:</span> ${msg}`;
+        }
+
+        form.addEventListener('submit', generateQr);
+
+        // Initial generation
+        generateQr();
+    </script>
+</body>
+</html>
