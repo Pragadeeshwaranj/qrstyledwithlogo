@@ -11,12 +11,19 @@
   },
   "unpkg": "./dist/index.umd.js",
   "scripts": {
+    "start": "node src/server.js",
     "build": "microbundle --no-compress",
     "build:minify": "microbundle",
     "build:gas": "webpack",
     "dev": "microbundle watch --no-compress",
     "example": "node examples/example.js",
-    "test": "node examples/example.js"
+    "test": "node examples/example.js",
+    "test:api": "node examples/api_test.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "cors": "^2.8.5",
+    "multer": "^1.4.5-lts.1"
   },
   "keywords": [
     "qr",
