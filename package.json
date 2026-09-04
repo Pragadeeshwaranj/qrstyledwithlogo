@@ -1,0 +1,47 @@
+{
+  "name": "qrstyledwithlogo",
+  "version": "1.0.0",
+  "description": "Zero-dependency QR code generator featuring styled rounded-corner eyes, circular dot modules, and support for high-quality logo overlays with circular backdrops.",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "exports": {
+    "require": "./dist/index.js",
+    "import": "./dist/index.mjs",
+    "default": "./dist/index.modern.js"
+  },
+  "unpkg": "./dist/index.umd.js",
+  "scripts": {
+    "build": "microbundle --no-compress",
+    "build:minify": "microbundle",
+    "build:gas": "webpack",
+    "dev": "microbundle watch --no-compress",
+    "example": "node examples/example.js",
+    "test": "node examples/example.js"
+  },
+  "keywords": [
+    "qr",
+    "qrcode",
+    "logo",
+    "qr-logo",
+    "zero-dependency",
+    "custom-qr",
+    "styled-qr",
+    "vector-style"
+  ],
+  "author": "Pragadeeshwaran Jayapal <pragadeeshwaran.jayapal@valeo.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "publishConfig": {
+    "@softwarefactory:registry": "https://artf.alm.vnet.valeo.com/artifactory/api/npm/npm-remote/"
+  },
+  "devDependencies": {
+    "buffer": "^6.0.3",
+    "microbundle": "^0.15.1",
+    "pako": "^2.1.0",
+    "stream-browserify": "^3.0.0",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4"
+  }
+}
