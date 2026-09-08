@@ -10,6 +10,7 @@ This library features a modernized vector-style rendering pipeline that generate
 
 No native C++ modules, no external canvas or graphics dependencies required—ideal for lightweight and serverless environments.
 
+**Live Demo:** [https://qr-code-with-logo.onrender.com/](https://qr-code-with-logo.onrender.com/)
 ---
 
 ## Features
