@@ -91,6 +91,76 @@ Generates a stylized PNG QR Code, returning it as a Node.js `Buffer`. If an outp
 
 ---
 
+## Express API & Interactive Playground
+
+This library includes a built-in, production-ready Express API server and an interactive web-based playground to test your custom styling and generate codes dynamically.
+
+### Running the Server
+
+1. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+2. **Start the API server**:
+   ```bash
+   npm start
+   ```
+   This boots the Express server on port `3000` (configurable via the `PORT` environment variable).
+
+3. **Open the Playground**:
+   Navigate to **`http://localhost:3000`** in your browser to access the beautiful web-based configuration dashboard.
+
+### API Endpoints
+
+#### 1. GET `/api/qr`
+Generate a stylized QR code directly using query parameters. This is highly recommended for direct integration inside an `<img>` tag!
+
+* **Parameters**:
+  * `text` *(String, Required)*: Text or URL to encode.
+  * `qrColor` *(String)*: Hex value (e.g. `#4C8A00`) of the QR pattern.
+  * `bgColor` *(String)*: Hex value of the background.
+  * `borderColor` *(String)*: Hex value of the border frame.
+  * `scale` *(Number)*: Pixel module size. Default `16`.
+  * `border` *(Number)*: Quiet zone border. Default `4`.
+  * `dotScale` *(Number)*: Size scale of dot matrices (`0.1` to `1.0`).
+  * `level` *(String)*: Error correction level (`L`, `M`, `Q`, `H`).
+  * `logoUrl` *(String)*: Fully qualified URL to fetch a center logo.
+  * `useDefaultLogo` *(Boolean)*: Set to `true` to use the repository's local `logo.png` preset.
+
+* **Example Use**:
+  ```html
+  <img src="http://localhost:3000/api/qr?text=https://google.com&qrColor=%234C8A00&useDefaultLogo=true" />
+  ```
+
+#### 2. POST `/api/qr` (JSON)
+Generate a stylized QR code by sending a JSON payload. Excellent for passing base64 images directly.
+
+* **Headers**: `Content-Type: application/json`
+* **Body Fields**: Accepts the same properties as GET query parameters, plus:
+  * `logoBase64` *(String)*: Base64-encoded PNG image data.
+* **Response**: Binary stream of the generated PNG file.
+
+#### 3. POST `/api/qr/upload` (Multipart Form-Data)
+Upload a custom local logo file alongside QR configuration fields.
+
+* **Request Type**: `multipart/form-data`
+* **File Field**: `logo` (PNG image)
+* **Fields**: Accepts `text`, `qrColor`, `bgColor`, `borderColor`, `scale`, `border`, `dotScale`, `logoSizeRatio`, `logoPaddingRatio`, `level`.
+* **Response**: Binary stream of the generated PNG file.
+
+---
+
+### Automated API Verification
+
+To verify that the API endpoints are functioning properly, you can run the automated integration tests:
+```bash
+npm run test:api
+```
+This runs an integration test suite that spawns the server on an ephemeral port, makes real queries to verify response headers, validations, and binary integrity, and exits automatically.
+
+---
+
 ## Technical Considerations
 
 ### Logo Recommendations
@@ -149,7 +219,7 @@ function createStyledQrInDrive() {
 
     // 3. Convert returned Uint8Array back to a standard GAS Blob
     const signedQrBytes = Array.from(qrBufferBytes).map(b => b > 127 ? b - 256 : b);
-    const qrBlob = Utilities.newBlob(signedQrBytes, "image/png", "qrcode_valeo.png");
+    const qrBlob = Utilities.newBlob(signedQrBytes, "image/png", "qrcode.png");
 
     // 4. Save to Google Drive
     const file = DriveApp.getRootFolder().createFile(qrBlob);
